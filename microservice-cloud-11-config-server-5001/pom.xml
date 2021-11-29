@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>microservice-cloud-01</artifactId>
+        <groupId>com.tjy.springcloud</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../microservice-cloud-01/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>microservice-cloud-11-config-server-5001</artifactId>
+
+
+    <dependencies>
+        <!-- Spring Cloud Config配置中心依赖 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>app</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <!-- docker的maven插件，官网： https://github.com/spotify/docker-maven-plugin -->
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <configuration>
+                    <forceTags>true</forceTags>
+                    <!--设置镜像名称-->
+                    <imageName>registry.cn-hangzhou.aliyuncs.com/tianjy/server:1.1</imageName>
+                    <baseImage>java:alpine</baseImage>
+                    <volumes>/root</volumes>
+                    <entryPoint>["java","-jar","/${project.build.finalName}.jar"]</entryPoint>
+                    <imageTags>
+                        <imageTag>1.0</imageTag>
+                    </imageTags>
+                    <dockerHost>http://192.168.10.11:2375</dockerHost>
+                    <serverId>docker-aliyun</serverId>
+                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <resources>
+                        <resource>  <!-- 指定打包的资源文件 -->
+                            <targetPath>/</targetPath> <!-- 指定要复制的目录路径，这里是当前目录 -->
+                            <directory>${project.build.directory}</directory> <!-- 指定要复制的根目录，这里是target目录 -->
+                            <include>${project.build.finalName}.jar</include> <!-- 这里指定最后生成的jar包 -->
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
